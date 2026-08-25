@@ -10,7 +10,12 @@ const dbMock = vi.hoisted(() => ({
   createBlockedCampaign: vi.fn(),
 }));
 
+const capabilityMock = vi.hoisted(() => ({
+  getCheckoutCapabilityStatus: vi.fn(),
+}));
+
 vi.mock("./db", () => dbMock);
+vi.mock("./shopifyCapabilities", () => capabilityMock);
 
 import { studioRouter } from "./routers/studio";
 import { THEME_ATELIER } from "../shared/checkoutStudio";
@@ -28,6 +33,9 @@ beforeEach(() => {
   vi.resetAllMocks();
   dbMock.getStoreByOwnerOpenId.mockResolvedValue(null);
   dbMock.findOrCreateDemoStore.mockResolvedValue({ id: 42, status: "demo", shopDomain: "pending.merchant.local" });
+  capabilityMock.getCheckoutCapabilityStatus.mockResolvedValue({
+    state: "ready", title: "Checkout configuration verified", message: "Shopify returned a configuration.", checkoutBrandingAvailable: true, configurationIds: ["gid://shopify/CheckoutAndAccountsConfiguration/1"],
+  });
 });
 
 describe("studio router", () => {
@@ -38,12 +46,14 @@ describe("studio router", () => {
     expect(result.capabilities).toHaveLength(3);
   });
 
-  it("uses the persisted Shopify store and reports a capability check when embedded authentication established it", async () => {
+  it("uses the persisted Shopify store and reports a verified capability result", async () => {
     dbMock.getStoreByOwnerOpenId.mockResolvedValue({ id: 77, status: "connected", shopDomain: "store-plugins.myshopify.com" });
     const result = await studioRouter.createCaller(ctx).workspace();
     expect(dbMock.findOrCreateDemoStore).not.toHaveBeenCalled();
     expect(result.store.id).toBe(77);
-    expect(result.connection.state).toBe("checking");
+    expect(result.connection.state).toBe("ready");
+    expect(result.capabilities.find(capability => capability.key === "checkout_branding")?.availability).toBe("available");
+    expect(capabilityMock.getCheckoutCapabilityStatus).toHaveBeenCalledWith("merchant-1");
   });
 
   it("saves style drafts to the current merchant store", async () => {
