@@ -13,6 +13,7 @@ import { protectedProcedure, router } from "../_core/trpc";
 import { validateCampaignWindow, validateStyleTokens } from "../../shared/studioValidation";
 import { buildPublishReview, describeConnectionState } from "../../shared/studioSafety";
 import { UnconnectedShopifyCheckoutGateway } from "../checkoutGateway";
+import { getCheckoutCapabilityStatus } from "../shopifyCapabilities";
 import type { StyleTokens } from "../../shared/checkoutStudio";
 
 const tokenSchema = z.object({
@@ -41,13 +42,29 @@ export const studioRouter = router({
     const store = await resolveMerchantStore(ctx.user);
     const checkout = await new UnconnectedShopifyCheckoutGateway().getContext();
     const isEmbeddedShopifyStore = store.status === "connected";
+    const capabilityStatus = isEmbeddedShopifyStore
+      ? await getCheckoutCapabilityStatus(ctx.user.openId)
+      : null;
+    const state = capabilityStatus?.state ?? (isEmbeddedShopifyStore ? "checking" : "not_connected");
     return {
       store,
       connection: {
-        state: isEmbeddedShopifyStore ? "checking" : checkout.state,
-        ...describeConnectionState(isEmbeddedShopifyStore ? "checking" : "not_connected"),
+        state,
+        ...describeConnectionState(state),
+        ...(capabilityStatus ? { title: capabilityStatus.title, message: capabilityStatus.message } : {}),
       },
-      capabilities: checkout.capabilities,
+      capabilities: capabilityStatus
+        ? checkout.capabilities.map(capability => capability.key === "checkout_branding"
+          ? {
+              ...capability,
+              availability: capabilityStatus.checkoutBrandingAvailable ? "available" : "unavailable",
+              reason: capabilityStatus.message,
+              fallback: capabilityStatus.checkoutBrandingAvailable
+                ? "Save a draft and review it before any live configuration action."
+                : capability.fallback,
+            }
+          : capability)
+        : checkout.capabilities,
     };
   }),
   styles: router({
@@ -96,6 +113,7 @@ export const studioRouter = router({
         return buildPublishReview({
           connectionState: store.status === "connected" ? "checking" : "not_connected",
           checkoutBrandingAvailable: false,
+          liveApplyImplemented: false,
           qualityWarnings: 0,
           activeModules: 0,
           styleName: style.name,
