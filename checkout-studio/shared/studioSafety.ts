@@ -38,6 +38,20 @@ export function buildPublishReview(input: {
   };
 }
 
+/** Gives the review dialog one truthful reason why its disabled live action remains unavailable. */
+export function describeLiveApplyBlock(input: {
+  connectionState: ConnectionState;
+  capabilityMessage?: string;
+}) {
+  if (input.connectionState === "denied" || input.connectionState === "error") {
+    return input.capabilityMessage ?? "Shopify has not granted the required checkout configuration access. The live checkout has not changed.";
+  }
+  if (input.connectionState === "not_connected") {
+    return "Open Checkout Studio from Shopify Admin to establish a verified merchant session. The live checkout has not changed.";
+  }
+  return "Checkout Studio has not yet enabled its reviewed Shopify configuration update and rollback pipeline. The live checkout has not changed.";
+}
+
 export function describeConnectionState(state: ConnectionState) {
   const states: Record<ConnectionState, { title: string; message: string; tone: "neutral" | "warn" | "good" }> = {
     not_connected: { title: "Shopify not connected", message: "Design and save drafts now. Live store checks remain unavailable until a merchant installation is authorized.", tone: "warn" },
