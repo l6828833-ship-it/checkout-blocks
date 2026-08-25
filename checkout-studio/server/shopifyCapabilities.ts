@@ -2,7 +2,6 @@ import { decryptShopifyCredential } from "./shopifyEmbedded";
 import * as db from "./db";
 
 const ADMIN_API_VERSION = "2026-07";
-const READ_SCOPE = "read_checkout_and_accounts_configurations";
 
 type GraphQLError = { message?: string };
 
@@ -31,10 +30,6 @@ const CHECKOUT_CONFIGURATION_QUERY = `
   }
 `;
 
-function includesScope(grantedScopes: string, requiredScope: string) {
-  return grantedScopes.split(",").map(scope => scope.trim()).includes(requiredScope);
-}
-
 function unavailable(message: string, state: "denied" | "error" = "denied"): CheckoutCapabilityStatus {
   return {
     state,
@@ -43,11 +38,6 @@ function unavailable(message: string, state: "denied" | "error" = "denied"): Che
     checkoutBrandingAvailable: false,
     configurationIds: [],
   };
-}
-
-/** A missing configuration scope on this workflow can reflect Shopify Plus eligibility, not a broken app connection. */
-export function missingCheckoutConfigurationScopeStatus(): CheckoutCapabilityStatus {
-  return unavailable("Shopify did not grant Checkout and Accounts Configuration access to this store. Checkout styling through this API is available only to Shopify Plus stores. Your store connection and saved drafts remain available; use the Thank you page extension on this development store.");
 }
 
 /**
@@ -88,12 +78,6 @@ export async function getCheckoutCapabilityStatus(ownerOpenId: string): Promise<
   if (!installation || installation.status !== "active") {
     const result = unavailable("The Shopify authorization is not active. Reopen Checkout Studio from Shopify Admin to refresh the merchant session.");
     await db.upsertFeatureCapability({ storeId: store.id, capability: "checkout_branding", availability: "unavailable", reason: result.message, fallback: "Continue using the labeled simulation while authorization is restored." });
-    return result;
-  }
-
-  if (!includesScope(installation.grantedScopes, READ_SCOPE)) {
-    const result = missingCheckoutConfigurationScopeStatus();
-    await db.upsertFeatureCapability({ storeId: store.id, capability: "checkout_branding", availability: "unavailable", reason: result.message, fallback: "The live checkout remains unchanged until authorization is refreshed." });
     return result;
   }
 
