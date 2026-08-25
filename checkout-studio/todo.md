@@ -103,6 +103,8 @@
 - [x] Replace the temporary `checking` connection state with a server-side Shopify Checkout and Accounts Configuration API capability check after verifying the current supported query surface.
 - [x] Keep final live apply blocked with a truthful explanation until a separately reviewed Shopify configuration mutation and rollback pipeline exists.
 - [ ] Deploy the server-side Shopify capability-status adapter and publish-safety update to Fly.io, then refresh the embedded app.
+- [x] Refresh the stored Shopify offline credential when it lacks the configured checkout configuration read scope instead of reusing the incomplete authorization.
+- [ ] If Shopify still denies the configured scope after a fresh token exchange, guide the merchant through one app reauthorization or reinstall.
 - [ ] Verify production renders a server-derived Checkout and Accounts Configuration API outcome rather than the temporary checking state.
 - [ ] Verify production review/apply remains blocked with the explicit no-mutation-and-no-rollback-pipeline explanation.
 - [x] Add an active Fly.io configuration that runs the PostgreSQL migration as a release command before each deployment, with regression coverage for the release command and internal port.
