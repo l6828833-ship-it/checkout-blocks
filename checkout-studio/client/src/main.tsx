@@ -52,13 +52,15 @@ const trpcClient = trpc.createClient({
       url: "/api/trpc",
       transformer: superjson,
       async headers() {
-        try {
-          const idToken = await window.shopify?.idToken?.();
-          if (idToken) return { Authorization: `Bearer ${idToken}` };
-        } catch {
-          // Outside Shopify Admin, or if App Bridge is unavailable, retain the
-          // existing Manus preview-session fallback below.
-        }
+        // App Bridge intercepts standard fetch requests to this app's own
+        // domain and supplies a fresh Shopify ID token automatically. Keep a
+        // preview-only fallback header for non-embedded local development.
+        const connectionDiagnostics = {
+          "X-Checkout-Studio-Embedded": String(window.self !== window.top),
+          "X-Checkout-Studio-App-Bridge": String(
+            typeof window.shopify?.idToken === "function"
+          ),
+        };
         // Preview auto-login fallback: when the browser blocks iframe cookies
         // (Safari ITP / private browsing / WebView), the runtime mirrors the
         // session into sessionStorage so we can forward it as a Bearer token.
@@ -70,19 +72,13 @@ const trpcClient = trpc.createClient({
             const pair = raw.split(";").find(s => s.trim().startsWith(prefix));
             const token = pair?.trim().slice(prefix.length);
             if (token) {
-              return { Authorization: `Bearer ${token}` };
+              return { ...connectionDiagnostics, Authorization: `Bearer ${token}` };
             }
           }
         } catch {
           // sessionStorage unavailable
         }
-        return {};
-      },
-      fetch(input, init) {
-        return globalThis.fetch(input, {
-          ...(init ?? {}),
-          credentials: "include",
-        });
+        return connectionDiagnostics;
       },
     }),
   ],
