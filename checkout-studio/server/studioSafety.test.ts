@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildPublishReview, describeConnectionState } from "../shared/studioSafety";
+import { buildPublishReview, describeConnectionState, describeLiveApplyBlock } from "../shared/studioSafety";
 
 describe("Checkout Studio publish safety", () => {
   it("prevents publishing before a merchant has connected Shopify", () => {
@@ -34,5 +34,12 @@ describe("Checkout Studio publish safety", () => {
     });
     expect(review.canPublish).toBe(false);
     expect(review.reasons.some(reason => reason.includes("rollback pipeline"))).toBe(true);
+  });
+
+  it("shows the Shopify capability denial rather than incorrectly telling a connected merchant to connect again", () => {
+    expect(describeLiveApplyBlock({
+      connectionState: "denied",
+      capabilityMessage: "The active Shopify authorization does not include checkout configuration read access.",
+    })).toContain("does not include checkout configuration read access");
   });
 });
