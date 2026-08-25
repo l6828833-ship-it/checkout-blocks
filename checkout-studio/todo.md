@@ -115,6 +115,8 @@
 - [ ] Verify production renders a server-derived Checkout and Accounts Configuration API outcome rather than the temporary checking state.
 - [ ] Verify production review/apply remains blocked with the explicit no-mutation-and-no-rollback-pipeline explanation.
 - [ ] Deploy the connected-but-Plus-ineligible capability message and dynamic workspace labels to Fly.io, then refresh checkout styles.
+- [ ] Repair the capability check for the confirmed Shopify Plus store so it refreshes current granted scopes and performs a fresh read-only configuration query.
+- [x] Remove the stale stored-scope precondition from the capability check and use Shopify’s live read-only GraphQL response as the source of truth for Plus-store access.
 - [ ] Verify the non-Plus development store displays the supported Thank you extension route rather than a reauthorization instruction.
 - [x] Add an active Fly.io configuration that runs the PostgreSQL migration as a release command before each deployment, with regression coverage for the release command and internal port.
 - [ ] Set Fly.io `DATABASE_URL` to the Supabase connection string and validate Checkout Studio can read and write production PostgreSQL data.
