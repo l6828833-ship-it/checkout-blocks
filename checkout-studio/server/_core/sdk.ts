@@ -274,6 +274,10 @@ class SDKServer {
         if (error instanceof ShopifyEmbeddedAuthError && error.retryWithFreshIdToken) {
           throw ForbiddenError("Shopify session is invalid or expired");
         }
+        const diagnostic = error instanceof Error ? error.message : "Unknown embedded session error";
+        // Never log token data. The message is sufficient to identify missing
+        // credentials, database connectivity, or a failed server-side exchange.
+        console.warn(`[Shopify] Embedded session was not established: ${diagnostic}`);
       }
     }
 
