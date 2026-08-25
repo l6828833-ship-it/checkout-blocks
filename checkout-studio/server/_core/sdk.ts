@@ -261,6 +261,8 @@ class SDKServer {
     const bearerToken = typeof authHeader === "string" && authHeader.startsWith("Bearer ")
       ? authHeader.slice(7)
       : null;
+    const isEmbeddedRequest = req.headers["x-checkout-studio-embedded"] === "true";
+    const appBridgeIdTokenIsAvailable = req.headers["x-checkout-studio-app-bridge"] === "true";
 
     // Shopify App Bridge sends a fresh short-lived ID token with embedded app
     // requests. Verify and exchange it server-side before considering the
@@ -279,6 +281,15 @@ class SDKServer {
         // credentials, database connectivity, or a failed server-side exchange.
         console.warn(`[Shopify] Embedded session was not established: ${diagnostic}`);
       }
+    }
+
+    if (!bearerToken && isEmbeddedRequest) {
+      // These client-supplied flags are diagnostic-only and do not grant
+      // access. They make it possible to distinguish App Bridge availability
+      // from an unembedded preview without ever recording a token value.
+      console.warn(
+        `[Shopify] Embedded request arrived without an ID token (App Bridge idToken available: ${appBridgeIdTokenIsAvailable}).`
+      );
     }
 
     // 1. Prefer the session cookie (regular OAuth login).
