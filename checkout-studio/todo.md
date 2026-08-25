@@ -96,8 +96,15 @@
 - [ ] Set Fly.io production secrets for the Shopify client ID, client secret, stable encryption secret, and production database before rechecking the embedded connection state.
 - [ ] Prepare the public Shopify App Store launch path with merchant-specific installations and server-only Fly.io secret handling.
 - [x] Convert the Checkout Studio schema, database driver, helpers, tests, Fly configuration, and migration tooling from MySQL to Supabase-compatible PostgreSQL.
-- [ ] Apply the generated PostgreSQL migration to the merchant’s real Supabase database and verify tables are created successfully.
-- [ ] Repair the confirmed production `stores` query failure by applying the existing PostgreSQL schema to the configured Supabase database.
+- [x] Apply the generated PostgreSQL migration to the merchant’s real Supabase database and verify tables are created successfully through the Fly.io release log.
+- [x] Repair the confirmed production `stores` query failure by applying the existing PostgreSQL schema to the configured Supabase database.
+- [x] Refresh Checkout Studio from Shopify Admin after the successful migration and confirm the workspace leaves Demo mode, showing Store connected in the merchant’s embedded Shopify Admin screenshot.
+- [ ] Verify production PostgreSQL persistence after migration by loading the workspace and saving a merchant draft without database errors.
+- [x] Replace the temporary `checking` connection state with a server-side Shopify Checkout and Accounts Configuration API capability check after verifying the current supported query surface.
+- [x] Keep final live apply blocked with a truthful explanation until a separately reviewed Shopify configuration mutation and rollback pipeline exists.
+- [ ] Deploy the server-side Shopify capability-status adapter and publish-safety update to Fly.io, then refresh the embedded app.
+- [ ] Verify production renders a server-derived Checkout and Accounts Configuration API outcome rather than the temporary checking state.
+- [ ] Verify production review/apply remains blocked with the explicit no-mutation-and-no-rollback-pipeline explanation.
 - [x] Add an active Fly.io configuration that runs the PostgreSQL migration as a release command before each deployment, with regression coverage for the release command and internal port.
 - [ ] Set Fly.io `DATABASE_URL` to the Supabase connection string and validate Checkout Studio can read and write production PostgreSQL data.
 - [ ] Run a live end-to-end test of embedded Shopify session persistence and merchant workspace persistence against Supabase.
@@ -109,7 +116,7 @@
 - [x] Resolve the missing App Bridge authorization header observed in Fly.io logs despite a valid live App Bridge key and script by restoring the standard App Bridge fetch interceptor path.
 - [ ] Deploy the App Bridge fetch-interceptor change to Fly.io and capture fresh server logs immediately after opening the app from Shopify Admin.
 - [ ] Verify live embedded requests include Shopify authentication and the workspace leaves Demo mode, or capture a specific non-secret Shopify diagnostic.
-- [ ] Use the safe embedded-context diagnostic to identify whether App Bridge is unavailable or its fetch interceptor is not attaching an ID token in production.
+- [x] Use the safe embedded-context diagnostic to identify that App Bridge was initially unavailable, then confirm the post-fix embedded request establishes a Shopify session.
 - [x] Load the Shopify App Bridge script synchronously before the React bootstrap so the embedded `shopify` global is available for the first tRPC request.
 - [ ] Diagnose and resolve the Fly.io proxy reachability warning after production secrets were added.
 - [x] Push the validated Supabase PostgreSQL migration and Fly.io runtime fixes to the connected `l6828833-ship-it/checkout-blocks` GitHub repository.
