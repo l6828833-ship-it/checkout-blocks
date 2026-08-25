@@ -4,6 +4,7 @@ import {
   createMerchantStyle,
   findOrCreateDemoStore,
   getMerchantStyleForStore,
+  getStoreByOwnerOpenId,
   listMerchantStyles,
   listScheduledCampaigns,
   listStyleVersions,
@@ -24,13 +25,20 @@ const tokenSchema = z.object({
   radius: z.number(), density: z.enum(["comfortable", "balanced", "compact"]),
 });
 
+/** Prefer the store persisted by a verified Shopify App Bridge token. */
+async function resolveMerchantStore(user: { openId: string; name?: string | null }) {
+  const verifiedStore = await getStoreByOwnerOpenId(user.openId);
+  if (verifiedStore) return verifiedStore;
+  return findOrCreateDemoStore(user.openId, user.name ?? "Untitled store");
+}
+
 /**
- * Merchant-safe workspace procedures. This router deliberately persists a demo
- * workspace while an installation is pending, and never attempts Shopify writes.
+ * Merchant-safe workspace procedures. Shopify writes remain unavailable until
+ * a later capability check promotes the connection from `checking` to `ready`.
  */
 export const studioRouter = router({
   workspace: protectedProcedure.query(async ({ ctx }) => {
-    const store = await findOrCreateDemoStore(ctx.user.openId, ctx.user.name ?? "Untitled store");
+    const store = await resolveMerchantStore(ctx.user);
     const checkout = await new UnconnectedShopifyCheckoutGateway().getContext();
     const isEmbeddedShopifyStore = store.status === "connected";
     return {
@@ -44,7 +52,7 @@ export const studioRouter = router({
   }),
   styles: router({
     list: protectedProcedure.query(async ({ ctx }) => {
-      const store = await findOrCreateDemoStore(ctx.user.openId, ctx.user.name ?? "Untitled store");
+      const store = await resolveMerchantStore(ctx.user);
       return listMerchantStyles(store.id);
     }),
     saveDraft: protectedProcedure.input(z.object({
@@ -52,7 +60,7 @@ export const studioRouter = router({
       presetSlug: z.string().trim().min(1).max(100).optional(),
       tokens: tokenSchema,
     })).mutation(async ({ ctx, input }) => {
-      const store = await findOrCreateDemoStore(ctx.user.openId, ctx.user.name ?? "Untitled store");
+      const store = await resolveMerchantStore(ctx.user);
       return createMerchantStyle({
         storeId: store.id,
         name: input.name,
@@ -64,14 +72,13 @@ export const studioRouter = router({
   }),
   versions: router({
     list: protectedProcedure.query(async ({ ctx }) => {
-      const store = await findOrCreateDemoStore(ctx.user.openId, ctx.user.name ?? "Untitled store");
+      const store = await resolveMerchantStore(ctx.user);
       return listStyleVersions(store.id);
     }),
   }),
   validation: router({
-    style: protectedProcedure.input(z.object({
-      tokens: tokenSchema,
-    })).query(({ input }) => validateStyleTokens(input.tokens as StyleTokens)),
+    style: protectedProcedure.input(z.object({ tokens: tokenSchema }))
+      .query(({ input }) => validateStyleTokens(input.tokens as StyleTokens)),
     campaignWindow: protectedProcedure.input(z.object({ startAt: z.date(), endAt: z.date() }))
       .query(({ input }) => validateCampaignWindow(input.startAt, input.endAt)),
     publishReview: protectedProcedure.input(z.object({
@@ -83,11 +90,11 @@ export const studioRouter = router({
     })).query(({ input }) => buildPublishReview(input)),
     savedDraftReview: protectedProcedure.input(z.object({ styleId: z.number().int().positive() }))
       .query(async ({ ctx, input }) => {
-        const store = await findOrCreateDemoStore(ctx.user.openId, ctx.user.name ?? "Untitled store");
+        const store = await resolveMerchantStore(ctx.user);
         const style = await getMerchantStyleForStore(store.id, input.styleId);
         if (!style) throw new Error("Saved style was not found in this merchant workspace.");
         return buildPublishReview({
-          connectionState: "not_connected",
+          connectionState: store.status === "connected" ? "checking" : "not_connected",
           checkoutBrandingAvailable: false,
           qualityWarnings: 0,
           activeModules: 0,
@@ -97,7 +104,7 @@ export const studioRouter = router({
   }),
   campaigns: router({
     list: protectedProcedure.query(async ({ ctx }) => {
-      const store = await findOrCreateDemoStore(ctx.user.openId, ctx.user.name ?? "Untitled store");
+      const store = await resolveMerchantStore(ctx.user);
       return listScheduledCampaigns(store.id);
     }),
     create: protectedProcedure.input(z.object({
@@ -108,10 +115,8 @@ export const studioRouter = router({
       timezone: z.string().trim().min(1).max(80),
     })).mutation(async ({ ctx, input }) => {
       const timing = validateCampaignWindow(input.startAt, input.endAt);
-      if (timing.status === "warning") {
-        throw new Error(timing.message);
-      }
-      const store = await findOrCreateDemoStore(ctx.user.openId, ctx.user.name ?? "Untitled store");
+      if (timing.status === "warning") throw new Error(timing.message);
+      const store = await resolveMerchantStore(ctx.user);
       return createBlockedCampaign({ ...input, storeId: store.id, createdByOpenId: ctx.user.openId });
     }),
   }),

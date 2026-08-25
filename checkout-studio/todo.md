@@ -100,8 +100,11 @@
 - [ ] Set Fly.io `DATABASE_URL` to the Supabase connection string and validate Checkout Studio can read and write production PostgreSQL data.
 - [ ] Run a live end-to-end test of embedded Shopify session persistence and merchant workspace persistence against Supabase.
 - [ ] Diagnose the remaining demo-mode state after Fly.io secrets are configured and confirm the verified embedded Shopify session is reaching the server.
+- [ ] Verify the updated Fly.io app is being opened from Shopify Admin with a valid App Bridge session before attempting any live capability check or publish action.
+- [x] Resolve verified Shopify stores through the embedded-session record rather than creating a demo workspace, and add connection-state UI diagnostics.
+- [ ] Push and deploy the verified-store workspace fix, then confirm Shopify Admin changes the app from demo mode to a connected capability-check state.
 - [ ] Diagnose and resolve the Fly.io proxy reachability warning after production secrets were added.
-- [ ] Push the validated Supabase PostgreSQL migration and Fly.io runtime fixes to the connected `l6828833-ship-it/checkout-blocks` GitHub repository.
+- [x] Push the validated Supabase PostgreSQL migration and Fly.io runtime fixes to the connected `l6828833-ship-it/checkout-blocks` GitHub repository.
 - [x] Fix the unresolved analytics URL placeholder and make the Manus OAuth fallback non-blocking for Shopify-only production deployments.
 - [ ] Prepare a self-hosting deployment package and migration checklist for the unified Checkout Studio Shopify app.
 - [x] Add a Thank you page block target for non-Plus development-store testing while retaining the checkout block target for Shopify Plus stores.

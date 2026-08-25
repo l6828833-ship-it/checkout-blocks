@@ -115,6 +115,14 @@ export async function findOrCreateDemoStore(ownerOpenId: string, displayName: st
   return created[0];
 }
 
+/** Returns the merchant store already established by a verified Shopify ID token. */
+export async function getStoreByOwnerOpenId(ownerOpenId: string) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is unavailable");
+  const records = await db.select().from(stores).where(eq(stores.ownerOpenId, ownerOpenId)).limit(1);
+  return records[0] ?? null;
+}
+
 function embeddedShopifyOwnerId(shopDomain: string, staffUserId: string) {
   const shopHash = createHash("sha256").update(shopDomain).digest("hex").slice(0, 20);
   const staffHash = createHash("sha256").update(staffUserId).digest("hex").slice(0, 20);

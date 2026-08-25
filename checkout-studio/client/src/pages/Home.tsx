@@ -164,7 +164,20 @@ function CheckoutPreview({ tokens, scenario, device = "desktop", brandName, bran
 }
 
 function CapabilityBanner() {
-  return <div className="flex flex-col gap-3 rounded-2xl border border-[#e8dbbf] bg-[#fffbf3] px-4 py-3.5 text-sm text-[#6c5737] sm:flex-row sm:items-center sm:justify-between"><div className="flex items-start gap-3"><div className="mt-0.5 rounded-full bg-[#f5e7c5] p-1.5"><Lock className="h-3.5 w-3.5" /></div><p><b>Demo workspace.</b> Live checkout actions are unavailable until this app is installed and Shopify confirms the store’s eligible checkout capabilities.</p></div><button onClick={() => toast.info("Connect your store after installation. Checkout Studio will verify the available Shopify capabilities before it enables publishing.")} className="shrink-0 text-left font-semibold underline underline-offset-4">How connection works</button></div>;
+  const workspaceQuery = trpc.studio.workspace.useQuery(undefined, { retry: false, refetchOnWindowFocus: true });
+  const isEmbedded = typeof window !== "undefined" && window.self !== window.top && new URLSearchParams(window.location.search).has("host");
+  const connectionState = workspaceQuery.data?.connection.state ?? "not_connected";
+  const isConnected = connectionState === "checking" || connectionState === "ready";
+  const isReady = connectionState === "ready";
+
+  useEffect(() => {
+    if (!isEmbedded || isConnected) return;
+    const retry = window.setInterval(() => void workspaceQuery.refetch(), 1000);
+    const stop = window.setTimeout(() => window.clearInterval(retry), 12_000);
+    return () => { window.clearInterval(retry); window.clearTimeout(stop); };
+  }, [isConnected, isEmbedded, workspaceQuery]);
+
+  return <div className={`flex flex-col gap-3 rounded-2xl border px-4 py-3.5 text-sm sm:flex-row sm:items-center sm:justify-between ${isConnected ? "border-violet-200 bg-violet-50 text-violet-950" : "border-[#e8dbbf] bg-[#fffbf3] text-[#6c5737]"}`}><div className="flex items-start gap-3"><div className={`mt-0.5 rounded-full p-1.5 ${isConnected ? "bg-violet-100" : "bg-[#f5e7c5]"}`}>{isConnected ? <CircleDashed className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}</div><p>{isReady ? <><b>Store verified.</b> Supported checkout capabilities are ready for review before any live change.</> : isConnected ? <><b>Store connected.</b> Checkout Studio is checking the Shopify plan, supported configuration fields, and extension targets. Live publishing remains locked until that check is complete.</> : <><b>Demo workspace.</b> Open Checkout Studio from Shopify Admin to establish a verified App Bridge session, then the app will check store eligibility.</>}</p></div><button onClick={() => void workspaceQuery.refetch()} className="shrink-0 text-left font-semibold underline underline-offset-4">Refresh connection</button></div>;
 }
 
 export default function Home() {

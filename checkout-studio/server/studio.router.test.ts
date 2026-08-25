@@ -3,6 +3,7 @@ import type { TrpcContext } from "./_core/context";
 
 const dbMock = vi.hoisted(() => ({
   findOrCreateDemoStore: vi.fn(),
+  getStoreByOwnerOpenId: vi.fn(),
   listMerchantStyles: vi.fn(),
   createMerchantStyle: vi.fn(),
   listScheduledCampaigns: vi.fn(),
@@ -25,6 +26,7 @@ const ctx = {
 
 beforeEach(() => {
   vi.resetAllMocks();
+  dbMock.getStoreByOwnerOpenId.mockResolvedValue(null);
   dbMock.findOrCreateDemoStore.mockResolvedValue({ id: 42, status: "demo", shopDomain: "pending.merchant.local" });
 });
 
@@ -34,6 +36,14 @@ describe("studio router", () => {
     expect(dbMock.findOrCreateDemoStore).toHaveBeenCalledWith("merchant-1", "Aster & Bloom");
     expect(result.connection.state).toBe("not_connected");
     expect(result.capabilities).toHaveLength(3);
+  });
+
+  it("uses the persisted Shopify store and reports a capability check when embedded authentication established it", async () => {
+    dbMock.getStoreByOwnerOpenId.mockResolvedValue({ id: 77, status: "connected", shopDomain: "store-plugins.myshopify.com" });
+    const result = await studioRouter.createCaller(ctx).workspace();
+    expect(dbMock.findOrCreateDemoStore).not.toHaveBeenCalled();
+    expect(result.store.id).toBe(77);
+    expect(result.connection.state).toBe("checking");
   });
 
   it("saves style drafts to the current merchant store", async () => {
