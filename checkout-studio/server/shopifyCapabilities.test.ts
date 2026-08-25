@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { classifyCheckoutConfigurationResponse, missingCheckoutConfigurationScopeStatus } from "./shopifyCapabilities";
+import { classifyCheckoutConfigurationResponse } from "./shopifyCapabilities";
 
 describe("Shopify checkout capability response classification", () => {
   it("only reports ready when Shopify returns a configuration", () => {
@@ -15,10 +15,9 @@ describe("Shopify checkout capability response classification", () => {
     expect(classifyCheckoutConfigurationResponse({ data: { checkoutAndAccountsConfigurations: { nodes: [] } } })).toMatchObject({ state: "denied", checkoutBrandingAvailable: false });
   });
 
-  it("identifies a missing configuration scope as a Plus eligibility limitation while preserving the connected workspace", () => {
-    const result = missingCheckoutConfigurationScopeStatus();
+  it("keeps a GraphQL access denial distinct from a locally cached installation scope", () => {
+    const result = classifyCheckoutConfigurationResponse({ errors: [{ message: "Access denied for checkoutAndAccountsConfigurations" }] });
     expect(result).toMatchObject({ state: "denied", checkoutBrandingAvailable: false });
-    expect(result.message).toContain("Shopify Plus");
-    expect(result.message).toContain("Thank you page extension");
+    expect(result.message).toContain("Access denied");
   });
 });
