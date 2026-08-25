@@ -8,6 +8,7 @@ const SHOPIFY_TOKEN_EXCHANGE_GRANT = "urn:ietf:params:oauth:grant-type:token-exc
 const SHOPIFY_ID_TOKEN_TYPE = "urn:ietf:params:oauth:token-type:id_token";
 const SHOPIFY_OFFLINE_TOKEN_TYPE = "urn:shopify:params:oauth:token-type:offline-access-token";
 const CHECKOUT_CONFIGURATION_READ_SCOPE = "read_checkout_and_accounts_configurations";
+const CHECKOUT_CONFIGURATION_WRITE_SCOPE = "write_checkout_and_accounts_configurations";
 
 export class ShopifyEmbeddedAuthError extends Error {
   constructor(message: string, public readonly retryWithFreshIdToken = false) {
@@ -69,7 +70,12 @@ function validShopDomain(value: string) {
 
 /** Stored credentials from before a scope change must not be silently reused. */
 export function hasCheckoutConfigurationReadScope(grantedScopes: string) {
-  return grantedScopes.split(",").map(scope => scope.trim()).includes(CHECKOUT_CONFIGURATION_READ_SCOPE);
+  const scopes = grantedScopes.split(",").map(scope => scope.trim());
+  return scopes.includes(CHECKOUT_CONFIGURATION_READ_SCOPE) || scopes.includes(CHECKOUT_CONFIGURATION_WRITE_SCOPE);
+}
+
+export function hasCheckoutConfigurationWriteScope(grantedScopes: string) {
+  return grantedScopes.split(",").map(scope => scope.trim()).includes(CHECKOUT_CONFIGURATION_WRITE_SCOPE);
 }
 
 export async function verifyShopifyIdToken(idToken: string): Promise<VerifiedShopifyIdToken> {
