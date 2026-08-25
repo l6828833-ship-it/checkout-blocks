@@ -167,6 +167,8 @@ function CapabilityBanner() {
   const workspaceQuery = trpc.studio.workspace.useQuery(undefined, { retry: false, refetchOnWindowFocus: true });
   const isEmbedded = typeof window !== "undefined" && window.self !== window.top && new URLSearchParams(window.location.search).has("host");
   const connectionState = workspaceQuery.data?.connection.state ?? "not_connected";
+  const connectionMessage = workspaceQuery.data?.connection.message;
+  const connectionTitle = workspaceQuery.data?.connection.title;
   const isConnected = connectionState === "checking" || connectionState === "ready";
   const isReady = connectionState === "ready";
 
@@ -177,7 +179,8 @@ function CapabilityBanner() {
     return () => { window.clearInterval(retry); window.clearTimeout(stop); };
   }, [isConnected, isEmbedded, workspaceQuery]);
 
-  return <div className={`flex flex-col gap-3 rounded-2xl border px-4 py-3.5 text-sm sm:flex-row sm:items-center sm:justify-between ${isConnected ? "border-violet-200 bg-violet-50 text-violet-950" : "border-[#e8dbbf] bg-[#fffbf3] text-[#6c5737]"}`}><div className="flex items-start gap-3"><div className={`mt-0.5 rounded-full p-1.5 ${isConnected ? "bg-violet-100" : "bg-[#f5e7c5]"}`}>{isConnected ? <CircleDashed className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}</div><p>{isReady ? <><b>Store verified.</b> Supported checkout capabilities are ready for review before any live change.</> : isConnected ? <><b>Store connected.</b> Checkout Studio is checking the Shopify plan, supported configuration fields, and extension targets. Live publishing remains locked until that check is complete.</> : <><b>Demo workspace.</b> Open Checkout Studio from Shopify Admin to establish a verified App Bridge session, then the app will check store eligibility.</>}</p></div><button onClick={() => void workspaceQuery.refetch()} className="shrink-0 text-left font-semibold underline underline-offset-4">Refresh connection</button></div>;
+  const isBlocked = connectionState === "denied" || connectionState === "error";
+  return <div className={`flex flex-col gap-3 rounded-2xl border px-4 py-3.5 text-sm sm:flex-row sm:items-center sm:justify-between ${isConnected ? "border-violet-200 bg-violet-50 text-violet-950" : isBlocked ? "border-rose-200 bg-rose-50 text-rose-950" : "border-[#e8dbbf] bg-[#fffbf3] text-[#6c5737]"}`}><div className="flex items-start gap-3"><div className={`mt-0.5 rounded-full p-1.5 ${isConnected ? "bg-violet-100" : isBlocked ? "bg-rose-100" : "bg-[#f5e7c5]"}`}>{isConnected ? <CircleDashed className="h-3.5 w-3.5" /> : <Lock className="h-3.5 w-3.5" />}</div><p>{isReady ? <><b>{connectionTitle ?? "Store verified"}.</b> {connectionMessage ?? "Supported checkout capabilities are ready for review before any live change."}</> : isConnected ? <><b>Store connected.</b> {connectionMessage ?? "Checkout Studio is checking the Shopify plan, supported configuration fields, and extension targets. Live publishing remains locked until that check is complete."}</> : isBlocked ? <><b>{connectionTitle ?? "Checkout capability unavailable"}.</b> {connectionMessage ?? "The live checkout has not changed. Review Shopify plan and permission access, then refresh."}</> : <><b>Demo workspace.</b> Open Checkout Studio from Shopify Admin to establish a verified App Bridge session, then the app will check store eligibility.</>}</p></div><button onClick={() => void workspaceQuery.refetch()} className="shrink-0 text-left font-semibold underline underline-offset-4">Refresh connection</button></div>;
 }
 
 export default function Home() {
