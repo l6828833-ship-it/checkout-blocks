@@ -230,7 +230,7 @@ export default function Home() {
   const workspaceConnectionLabel = workspaceConnectionState === "ready"
     ? "Checkout eligible"
     : workspaceConnectionState === "denied"
-      ? "Checkout Plus required"
+      ? workspaceQuery.data?.connection.message?.includes("Shopify Plus") ? "Checkout Plus required" : "Checkout access required"
       : workspaceConnectionState === "error"
         ? "Check unavailable"
         : workspaceConnectionState === "checking"
