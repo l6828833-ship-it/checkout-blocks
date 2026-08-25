@@ -45,6 +45,11 @@ function unavailable(message: string, state: "denied" | "error" = "denied"): Che
   };
 }
 
+/** A missing configuration scope on this workflow can reflect Shopify Plus eligibility, not a broken app connection. */
+export function missingCheckoutConfigurationScopeStatus(): CheckoutCapabilityStatus {
+  return unavailable("Shopify did not grant Checkout and Accounts Configuration access to this store. Checkout styling through this API is available only to Shopify Plus stores. Your store connection and saved drafts remain available; use the Thank you page extension on this development store.");
+}
+
 /**
  * Classifies a Shopify Admin GraphQL response without inferring plan eligibility.
  * Only a successful query with at least one configuration is considered ready.
@@ -87,7 +92,7 @@ export async function getCheckoutCapabilityStatus(ownerOpenId: string): Promise<
   }
 
   if (!includesScope(installation.grantedScopes, READ_SCOPE)) {
-    const result = unavailable("The active Shopify authorization does not include checkout configuration read access. Reauthorize the app after confirming its requested scopes.");
+    const result = missingCheckoutConfigurationScopeStatus();
     await db.upsertFeatureCapability({ storeId: store.id, capability: "checkout_branding", availability: "unavailable", reason: result.message, fallback: "The live checkout remains unchanged until authorization is refreshed." });
     return result;
   }
