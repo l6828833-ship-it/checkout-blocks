@@ -97,6 +97,8 @@
 - [ ] Prepare the public Shopify App Store launch path with merchant-specific installations and server-only Fly.io secret handling.
 - [x] Convert the Checkout Studio schema, database driver, helpers, tests, Fly configuration, and migration tooling from MySQL to Supabase-compatible PostgreSQL.
 - [ ] Apply the generated PostgreSQL migration to the merchant’s real Supabase database and verify tables are created successfully.
+- [ ] Repair the confirmed production `stores` query failure by applying the existing PostgreSQL schema to the configured Supabase database.
+- [x] Add an active Fly.io configuration that runs the PostgreSQL migration as a release command before each deployment, with regression coverage for the release command and internal port.
 - [ ] Set Fly.io `DATABASE_URL` to the Supabase connection string and validate Checkout Studio can read and write production PostgreSQL data.
 - [ ] Run a live end-to-end test of embedded Shopify session persistence and merchant workspace persistence against Supabase.
 - [ ] Diagnose the remaining demo-mode state after Fly.io secrets are configured and confirm the verified embedded Shopify session is reaching the server.
