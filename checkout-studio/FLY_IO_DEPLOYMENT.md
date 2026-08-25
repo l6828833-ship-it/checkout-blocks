@@ -6,12 +6,12 @@ This project is ready for deployment as a Node.js application on Fly.io. Fly rou
 
 ## Before you begin
 
-You need a Fly.io account, the Fly CLI (`flyctl`), and a MySQL-compatible production database. The database must be reachable from Fly Machines with TLS or other network protection appropriate to your database provider. Checkout Studio uses that database for merchant workspace records and encrypted Shopify installation credentials.
+You need a Fly.io account, the Fly CLI (`flyctl`), and a Supabase PostgreSQL project. Use the **Shared Pooler (session mode)** connection string from Supabase's **Connect** panel, because it works from IPv4 Fly Machines. Checkout Studio uses PostgreSQL for merchant workspace records and encrypted Shopify installation credentials.
 
 | Requirement | Why it is needed |
 |---|---|
 | Fly.io app name | Becomes the default `https://<app-name>.fly.dev` hostname. |
-| MySQL-compatible `DATABASE_URL` | Stores merchant drafts, capabilities, and encrypted Shopify token records. |
+| Supabase PostgreSQL `DATABASE_URL` | Stores merchant drafts, capabilities, and encrypted Shopify token records. |
 | `JWT_SECRET` | Derives the server-side encryption key for stored Shopify credentials. Keep it stable after production launch. |
 | Shopify client ID and secret | Validates App Bridge ID tokens and exchanges them server-side for Shopify API access tokens. |
 
@@ -40,7 +40,7 @@ Set the production secrets. Replace each placeholder with the real value; do not
 
 ```bash
 fly secrets set \
-  DATABASE_URL='YOUR_MYSQL_DATABASE_URL' \
+  DATABASE_URL='YOUR_SUPABASE_POSTGRESQL_CONNECTION_STRING' \
   JWT_SECRET='YOUR_LONG_RANDOM_SECRET' \
   SHOPIFY_API_KEY='YOUR_SHOPIFY_CLIENT_ID' \
   SHOPIFY_API_SECRET='YOUR_SHOPIFY_CLIENT_SECRET'
@@ -57,6 +57,10 @@ After deployment, confirm that this URL responds with JSON showing `status: "ok"
 ```text
 https://YOUR_FLY_APP_NAME.fly.dev/healthz
 ```
+
+## Connect Supabase before updating Shopify
+
+In Supabase, create a project and open **Connect**. Copy the **Shared Pooler — Session mode** URI, replace its password placeholder with your database password, then set that full URI as Fly's `DATABASE_URL` secret. After the secret is set, run `fly deploy` so the PostgreSQL migration release command creates Checkout Studio's tables.
 
 ## Update the Shopify app only after Fly is healthy
 

@@ -84,8 +84,25 @@
 - [ ] Make Checkout Studio open from Shopify Admin with a native-feeling app shell and sub-navigation comparable to Shopify Admin apps, while retaining Shopify-supported checkout boundaries.
 - [x] Confirm `checkout styles` as the single final Shopify app identity for the dashboard and Assurance extension.
 - [ ] Keep `checkout-studio-assurance` unchanged as the development-test app while configuring and relinking the final `checkout styles` app.
-- [ ] Defer any self-hosting migration until the merchant explicitly selects it; complete the native Shopify Admin embedded-app path first.
-- [ ] Prepare Fly.io deployment artifacts, production environment guidance, and Shopify URL-switch instructions for the complete Checkout Studio project.
+- [x] Defer any self-hosting migration until the merchant explicitly selects it; complete the native Shopify Admin embedded-app path first.
+- [x] Prepare Fly.io deployment artifacts, production environment guidance, and Shopify URL-switch instructions for the complete Checkout Studio project.
+- [ ] Deploy the Fly.io-ready package to the merchant’s Fly.io account and replace Shopify Dev Dashboard URLs with the final Fly HTTPS domain.
+- [ ] Verify the merchant-provided Fly.io production domain `https://checkout-studio.fly.dev/` before entering it in Shopify Dev Dashboard.
+- [ ] Open the separate checkout styles app in Shopify Dev Dashboard before changing any App URL, callback, or scope settings; leave the old Assurance test app unchanged.
+- [x] Confirm checkout styles is installed on `store-plugins.myshopify.com` and opens from Shopify Admin as the merchant workspace.
+- [ ] Reconfigure Fly.io to deploy from the repository’s `checkout-studio` subdirectory, which contains the Dockerfile and Fly configuration template.
+- [ ] Add a root-level Dockerfile so Fly.io’s GitHub repository-root deploy flow builds the `checkout-studio` subproject correctly.
+- [ ] Install Fly CLI in the user’s GitHub Codespaces environment before running the documented Fly launch workflow.
+- [ ] Set Fly.io production secrets for the Shopify client ID, client secret, stable encryption secret, and production database before rechecking the embedded connection state.
+- [ ] Prepare the public Shopify App Store launch path with merchant-specific installations and server-only Fly.io secret handling.
+- [x] Convert the Checkout Studio schema, database driver, helpers, tests, Fly configuration, and migration tooling from MySQL to Supabase-compatible PostgreSQL.
+- [ ] Apply the generated PostgreSQL migration to the merchant’s real Supabase database and verify tables are created successfully.
+- [ ] Set Fly.io `DATABASE_URL` to the Supabase connection string and validate Checkout Studio can read and write production PostgreSQL data.
+- [ ] Run a live end-to-end test of embedded Shopify session persistence and merchant workspace persistence against Supabase.
+- [ ] Diagnose the remaining demo-mode state after Fly.io secrets are configured and confirm the verified embedded Shopify session is reaching the server.
+- [ ] Diagnose and resolve the Fly.io proxy reachability warning after production secrets were added.
+- [ ] Push the validated Supabase PostgreSQL migration and Fly.io runtime fixes to the connected `l6828833-ship-it/checkout-blocks` GitHub repository.
+- [x] Fix the unresolved analytics URL placeholder and make the Manus OAuth fallback non-blocking for Shopify-only production deployments.
 - [ ] Prepare a self-hosting deployment package and migration checklist for the unified Checkout Studio Shopify app.
 - [x] Add a Thank you page block target for non-Plus development-store testing while retaining the checkout block target for Shopify Plus stores.
 - [x] Deliver the actual downloadable Thank you page extension archive rather than a project-version link.

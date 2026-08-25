@@ -11,9 +11,10 @@ const fakeDb = vi.hoisted(() => ({
   insert: vi.fn(() => ({ values })),
 }));
 
-vi.mock("drizzle-orm/mysql2", () => ({ drizzle: vi.fn(() => fakeDb) }));
+vi.mock("drizzle-orm/postgres-js", () => ({ drizzle: vi.fn(() => fakeDb) }));
+vi.mock("postgres", () => ({ default: vi.fn(() => ({})) }));
 
-process.env.DATABASE_URL = "mysql://test:test@localhost:3306/checkout_studio";
+process.env.DATABASE_URL = "postgresql://test:test@localhost:5432/checkout_studio";
 
 import { createBlockedCampaign, createMerchantStyle, listStyleVersions } from "./db";
 

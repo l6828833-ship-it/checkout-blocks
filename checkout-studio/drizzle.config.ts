@@ -7,8 +7,10 @@ if (!connectionString) {
 
 export default defineConfig({
   schema: "./drizzle/schema.ts",
-  out: "./drizzle",
-  dialect: "mysql",
+  // Preserve the historical MySQL migrations in ./drizzle while starting a
+  // clean PostgreSQL migration lineage for the selected Supabase database.
+  out: "./drizzle/postgres",
+  dialect: "postgresql",
   dbCredentials: {
     url: connectionString,
   },

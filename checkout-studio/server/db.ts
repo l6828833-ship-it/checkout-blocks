@@ -1,16 +1,21 @@
 import { createHash } from "crypto";
 import { desc, eq } from "drizzle-orm";
-import { drizzle } from "drizzle-orm/mysql2";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { InsertUser, merchantStyles, scheduledCampaigns, shopifyInstallations, stores, styleVersions, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
+let _client: ReturnType<typeof postgres> | null = null;
 
 // Lazily create the drizzle instance so local tooling can run without a DB.
 export async function getDb() {
   if (!_db && process.env.DATABASE_URL) {
     try {
-      _db = drizzle(process.env.DATABASE_URL);
+      // Supabase recommends the connection pooler for hosted applications. Disabling
+      // prepared statements keeps this client compatible with transaction-pool mode.
+      _client = postgres(process.env.DATABASE_URL, { prepare: false, max: 5 });
+      _db = drizzle(_client);
     } catch (error) {
       console.warn("[Database] Failed to connect:", error);
       _db = null;
@@ -69,8 +74,9 @@ export async function upsertUser(user: InsertUser): Promise<void> {
       updateSet.lastSignedIn = new Date();
     }
 
-    await db.insert(users).values(values).onDuplicateKeyUpdate({
-      set: updateSet,
+    await db.insert(users).values(values).onConflictDoUpdate({
+      target: users.openId,
+      set: { ...updateSet, updatedAt: new Date() },
     });
   } catch (error) {
     console.error("[Database] Failed to upsert user:", error);
@@ -166,7 +172,8 @@ export async function saveShopifyInstallation(input: {
     refreshTokenCiphertext: input.refreshTokenCiphertext ?? null,
     tokenExpiresAt: input.tokenExpiresAt ?? null,
     status: "active",
-  }).onDuplicateKeyUpdate({
+  }).onConflictDoUpdate({
+    target: shopifyInstallations.shopDomain,
     set: {
       staffUserId: input.staffUserId,
       accessTokenCiphertext: input.accessTokenCiphertext,
@@ -174,6 +181,7 @@ export async function saveShopifyInstallation(input: {
       tokenExpiresAt: input.tokenExpiresAt ?? null,
       grantedScopes: input.grantedScopes,
       status: "active",
+      updatedAt: new Date(),
     },
   });
 }

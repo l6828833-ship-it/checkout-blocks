@@ -31,11 +31,11 @@ const GET_USER_INFO_WITH_JWT_PATH = `/webdev.v1.WebDevAuthPublicService/GetUserI
 
 class OAuthService {
   constructor(private client: ReturnType<typeof axios.create>) {
-    console.log("[OAuth] Initialized with baseURL:", ENV.oAuthServerUrl);
+    console.log("[OAuth] Initialized with baseURL:", ENV.oAuthServerUrl || "disabled for Shopify embedded session");
     if (!ENV.oAuthServerUrl) {
-      console.error(
-        "[OAuth] ERROR: OAUTH_SERVER_URL is not configured! Set OAUTH_SERVER_URL environment variable."
-      );
+      const message = "[OAuth] Manus OAuth fallback is disabled; Shopify embedded session authentication remains available.";
+      if (ENV.shopifyApiKey && ENV.shopifyApiSecret) console.info(message);
+      else console.warn(`${message} Configure OAUTH_SERVER_URL only if you need the Manus login fallback.`);
     }
   }
 
