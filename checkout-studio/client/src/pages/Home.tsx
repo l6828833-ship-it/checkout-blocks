@@ -222,6 +222,23 @@ export default function Home() {
     onSuccess: () => toast.success("Campaign saved as blocked until Shopify capability validation is available."),
     onError: () => toast.error("Save a signed-in draft before preparing this campaign."),
   });
+  const publishMutation = trpc.studio.publishing.publishReviewed.useMutation({
+    onSuccess: result => {
+      setPersistedStyleId(result.styleId);
+      void workspaceQuery.refetch();
+      void versionsQuery.refetch();
+      toast.success(`Shopify confirmed ${result.configurationName}. Your reviewed checkout style is now live.`);
+    },
+    onError: error => toast.error(error.message || "Shopify did not apply the reviewed style. The live checkout has not changed."),
+  });
+  const rollbackMutation = trpc.studio.publishing.rollbackLatest.useMutation({
+    onSuccess: result => {
+      void workspaceQuery.refetch();
+      void versionsQuery.refetch();
+      toast.success(`Shopify restored ${result.configurationName}.`);
+    },
+    onError: error => toast.error(error.message || "Shopify did not restore the previous configuration. The live checkout has not changed."),
+  });
 
   previewPresentation = { brandName, brandTreatment, funnelMode: activeFunnel };
 
@@ -238,6 +255,27 @@ export default function Home() {
           : "Not connected";
   const filteredPresets = STYLE_PRESETS.filter(item => (category === "All" || item.category === category) && `${item.name} ${item.descriptor}`.toLowerCase().includes(search.toLowerCase()));
   const activeModules = Object.values(modules).filter(Boolean).length;
+  useEffect(() => {
+    const publish = () => {
+      if (publishMutation.isPending) return;
+      publishMutation.mutate({
+        styleName: draftName,
+        presetSlug: selectedPreset.slug,
+        tokens,
+        activeModules,
+        confirmed: true,
+      });
+    };
+    const rollback = () => {
+      if (!rollbackMutation.isPending) rollbackMutation.mutate({ confirmed: true });
+    };
+    window.addEventListener("checkout-studio:confirm-publish", publish);
+    window.addEventListener("checkout-studio:confirm-rollback", rollback);
+    return () => {
+      window.removeEventListener("checkout-studio:confirm-publish", publish);
+      window.removeEventListener("checkout-studio:confirm-rollback", rollback);
+    };
+  }, [activeModules, draftName, publishMutation, rollbackMutation, selectedPreset.slug, tokens]);
   const applyPreset = (preset: StylePreset) => { setSelectedPreset(preset); setTokens(preset.tokens); setArea("Style Editor"); toast.success(`${preset.name} is ready to personalize.`); };
   const applyAtelierTheme = (theme: ThemeAtelierPreset) => { setSelectedPreset(theme); setTokens(theme.tokens); setActiveFunnel(theme.funnelMode); setBrandTreatment(theme.tokens.logoTreatment); setDraftName(`${theme.name} chapter`); setArea("Brand Signature"); toast.success(`${theme.name} is ready for your brand signature.`); };
   const updateColor = (key: keyof Pick<StyleTokens, "background" | "surface" | "text" | "primary" | "primaryText" | "border" | "focus">, value: string) => setTokens(current => ({ ...current, [key]: value }));

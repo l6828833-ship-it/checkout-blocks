@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { featureCapabilities, InsertUser, merchantStyles, scheduledCampaigns, shopifyInstallations, stores, styleVersions, users } from "../drizzle/schema";
+import { auditLogs, featureCapabilities, InsertUser, merchantStyles, scheduledCampaigns, shopifyInstallations, stores, styleVersions, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -268,6 +268,66 @@ export async function createMerchantStyle(input: {
     isStable: false,
   });
   return style;
+}
+
+export async function recordReviewedShopifyPublish(input: {
+  storeId: number;
+  merchantStyleId: number;
+  actorOpenId: string;
+  configurationId: string;
+  previousConfiguration: Record<string, unknown>;
+  appliedConfiguration: Record<string, unknown>;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is unavailable");
+  const appliedAt = new Date();
+  await db.update(merchantStyles).set({
+    status: "published",
+    appliedAt,
+    capabilitySnapshot: { state: "ready", configurationId: input.configurationId, checkedAt: appliedAt.toISOString() },
+  }).where(eq(merchantStyles.id, input.merchantStyleId));
+  await db.update(styleVersions).set({ isStable: true })
+    .where(eq(styleVersions.merchantStyleId, input.merchantStyleId));
+  await db.insert(auditLogs).values({
+    storeId: input.storeId,
+    actorOpenId: input.actorOpenId,
+    action: "shopify.configuration.publish",
+    entityType: "checkout_and_accounts_configuration",
+    entityId: input.configurationId,
+    detail: {
+      merchantStyleId: input.merchantStyleId,
+      previousConfiguration: input.previousConfiguration,
+      appliedConfiguration: input.appliedConfiguration,
+      reviewedAt: appliedAt.toISOString(),
+    },
+  });
+}
+
+export async function getLatestShopifyPublishAudit(storeId: number) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is unavailable");
+  const records = await db.select().from(auditLogs)
+    .where(eq(auditLogs.storeId, storeId))
+    .orderBy(desc(auditLogs.createdAt));
+  return records.find(record => record.action === "shopify.configuration.publish") ?? null;
+}
+
+export async function recordShopifyConfigurationRollback(input: {
+  storeId: number;
+  actorOpenId: string;
+  configurationId: string;
+  restoredFromAuditId: number;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is unavailable");
+  await db.insert(auditLogs).values({
+    storeId: input.storeId,
+    actorOpenId: input.actorOpenId,
+    action: "shopify.configuration.rollback",
+    entityType: "checkout_and_accounts_configuration",
+    entityId: input.configurationId,
+    detail: { restoredFromAuditId: input.restoredFromAuditId, restoredAt: new Date().toISOString() },
+  });
 }
 
 export async function createBlockedCampaign(input: {
