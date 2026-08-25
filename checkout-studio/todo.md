@@ -104,6 +104,10 @@
 - [x] Resolve verified Shopify stores through the embedded-session record rather than creating a demo workspace, and add connection-state UI diagnostics.
 - [ ] Push and deploy the verified-store workspace fix, then confirm Shopify Admin changes the app from demo mode to a connected capability-check state.
 - [ ] Confirm Fly.io is running GitHub commit `c036530` before diagnosing the remaining Shopify embedded-session handoff.
+- [x] Resolve the missing App Bridge authorization header observed in Fly.io logs despite a valid live App Bridge key and script by restoring the standard App Bridge fetch interceptor path.
+- [ ] Deploy the App Bridge fetch-interceptor change to Fly.io and capture fresh server logs immediately after opening the app from Shopify Admin.
+- [ ] Verify live embedded requests include Shopify authentication and the workspace leaves Demo mode, or capture a specific non-secret Shopify diagnostic.
+- [ ] Use the safe embedded-context diagnostic to identify whether App Bridge is unavailable or its fetch interceptor is not attaching an ID token in production.
 - [ ] Diagnose and resolve the Fly.io proxy reachability warning after production secrets were added.
 - [x] Push the validated Supabase PostgreSQL migration and Fly.io runtime fixes to the connected `l6828833-ship-it/checkout-blocks` GitHub repository.
 - [x] Fix the unresolved analytics URL placeholder and make the Manus OAuth fallback non-blocking for Shopify-only production deployments.
