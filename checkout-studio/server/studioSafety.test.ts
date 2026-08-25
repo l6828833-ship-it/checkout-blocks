@@ -5,6 +5,7 @@ describe("Checkout Studio publish safety", () => {
   it("prevents publishing before a merchant has connected Shopify", () => {
     const review = buildPublishReview({
       connectionState: "not_connected", checkoutBrandingAvailable: false, qualityWarnings: 0,
+      liveApplyImplemented: false,
       activeModules: 2, styleName: "Soft Luxury",
     });
     expect(review.canPublish).toBe(false);
@@ -14,6 +15,7 @@ describe("Checkout Studio publish safety", () => {
   it("allows a publish review only when connection, capability, and quality checks pass", () => {
     const review = buildPublishReview({
       connectionState: "ready", checkoutBrandingAvailable: true, qualityWarnings: 0,
+      liveApplyImplemented: true,
       activeModules: 3, styleName: "Nordic Calm",
     });
     expect(review.canPublish).toBe(true);
@@ -23,5 +25,14 @@ describe("Checkout Studio publish safety", () => {
   it("uses a safe permission-denied explanation that confirms the live checkout is unchanged", () => {
     const state = describeConnectionState("denied");
     expect(state.message).toContain("live checkout configuration has not changed");
+  });
+
+  it("keeps live checkout unchanged when Shopify eligibility exists but no reviewed update pipeline is implemented", () => {
+    const review = buildPublishReview({
+      connectionState: "ready", checkoutBrandingAvailable: true, liveApplyImplemented: false,
+      qualityWarnings: 0, activeModules: 3, styleName: "Soft Luxury",
+    });
+    expect(review.canPublish).toBe(false);
+    expect(review.reasons.some(reason => reason.includes("rollback pipeline"))).toBe(true);
   });
 });
