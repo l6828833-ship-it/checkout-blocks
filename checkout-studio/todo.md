@@ -104,11 +104,18 @@
 - [x] Keep final live apply blocked with a truthful explanation until a separately reviewed Shopify configuration mutation and rollback pipeline exists.
 - [ ] Deploy the server-side Shopify capability-status adapter and publish-safety update to Fly.io, then refresh the embedded app.
 - [ ] Audit GitHub main, the Fly.io build context, and the live artifact revision to identify why the latest scope-refresh fix is not taking effect.
+- [x] Replace the obsolete Manus URLs in the checked-in `checkout styles` Shopify CLI configuration with the verified Fly.io App URL and callback.
 - [x] Replace the generic review-dialog connection message with the actual server-derived Shopify authorization outcome for connected stores.
 - [x] Refresh the stored Shopify offline credential when it lacks the configured checkout configuration read scope instead of reusing the incomplete authorization.
 - [ ] If Shopify still denies the configured scope after a fresh token exchange, guide the merchant through one app reauthorization or reinstall.
+- [ ] Complete the single Shopify-managed reauthorization of checkout styles so its granted token includes checkout configuration read access.
+- [x] Replace the stale authorization wording with an explicit connected-but-ineligible Shopify checkout configuration outcome when the store cannot use the Plus-only API.
+- [x] Confirm the `https://example.com` page belongs only to the isolated checkout-studio-assurance test app and leave that test app unchanged during checkout styles reauthorization.
+- [ ] Document the verified Assurance test-app placeholder configuration and keep it isolated from checkout styles reauthorization steps.
 - [ ] Verify production renders a server-derived Checkout and Accounts Configuration API outcome rather than the temporary checking state.
 - [ ] Verify production review/apply remains blocked with the explicit no-mutation-and-no-rollback-pipeline explanation.
+- [ ] Deploy the connected-but-Plus-ineligible capability message and dynamic workspace labels to Fly.io, then refresh checkout styles.
+- [ ] Verify the non-Plus development store displays the supported Thank you extension route rather than a reauthorization instruction.
 - [x] Add an active Fly.io configuration that runs the PostgreSQL migration as a release command before each deployment, with regression coverage for the release command and internal port.
 - [ ] Set Fly.io `DATABASE_URL` to the Supabase connection string and validate Checkout Studio can read and write production PostgreSQL data.
 - [ ] Run a live end-to-end test of embedded Shopify session persistence and merchant workspace persistence against Supabase.
