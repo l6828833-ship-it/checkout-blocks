@@ -1,0 +1,38 @@
+# This file stores configurations for your Shopify app.
+name = "checkout styles"
+client_id = ""
+application_url = "https://checkout-studio.fly.dev"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_checkout_and_accounts_configurations,write_checkout_and_accounts_configurations"
+
+[webhooks]
+api_version = "2026-07"
+
+  # Handled by: /app/routes/webhooks.app.uninstalled.tsx
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/uninstalled"
+  topics = ["app/uninstalled"]
+
+  # Handled by: /app/routes/webhooks.app.scopes_update.tsx
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+  # Webhooks can have filters
+  # Only receive webhooks for product updates with a product price >= 10.00
+  # See: https://shopify.dev/docs/apps/build/webhooks/customize/filters
+  # [[webhooks.subscriptions]]
+  # topics = ["products/update"]
+  # uri = "/webhooks/products/update"
+  # filter = "variants.price:>=10.00"
+
+  # Mandatory compliance topics for a public Shopify app.
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/compliance"
+  compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+
+[auth]
+redirect_urls = ["https://checkout-studio.fly.dev/auth/callback"]
