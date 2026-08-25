@@ -2,7 +2,7 @@ import { createHash } from "crypto";
 import { desc, eq } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import { InsertUser, merchantStyles, scheduledCampaigns, shopifyInstallations, stores, styleVersions, users } from "../drizzle/schema";
+import { featureCapabilities, InsertUser, merchantStyles, scheduledCampaigns, shopifyInstallations, stores, styleVersions, users } from "../drizzle/schema";
 import { ENV } from './_core/env';
 
 let _db: ReturnType<typeof drizzle> | null = null;
@@ -190,6 +190,31 @@ export async function saveShopifyInstallation(input: {
       grantedScopes: input.grantedScopes,
       status: "active",
       updatedAt: new Date(),
+    },
+  });
+}
+
+export async function upsertFeatureCapability(input: {
+  storeId: number;
+  capability: string;
+  availability: "available" | "limited" | "unavailable" | "unknown";
+  reason: string;
+  fallback: string;
+}) {
+  const db = await getDb();
+  if (!db) throw new Error("Database is unavailable");
+  await db.insert(featureCapabilities).values({
+    ...input,
+    source: "shopify-admin-graphql",
+    checkedAt: new Date(),
+  }).onConflictDoUpdate({
+    target: [featureCapabilities.storeId, featureCapabilities.capability],
+    set: {
+      availability: input.availability,
+      reason: input.reason,
+      fallback: input.fallback,
+      source: "shopify-admin-graphql",
+      checkedAt: new Date(),
     },
   });
 }
