@@ -9,6 +9,7 @@ export type PublishReview = {
 export function buildPublishReview(input: {
   connectionState: ConnectionState;
   checkoutBrandingAvailable: boolean;
+  liveApplyImplemented?: boolean;
   qualityWarnings: number;
   activeModules: number;
   styleName: string;
@@ -19,6 +20,9 @@ export function buildPublishReview(input: {
   }
   if (!input.checkoutBrandingAvailable) {
     reasons.push("Shopify has not confirmed an eligible checkout branding configuration for this store.");
+  }
+  if (!input.liveApplyImplemented) {
+    reasons.push("Checkout Studio has not yet enabled its reviewed Shopify configuration update and rollback pipeline. The live checkout will remain unchanged.");
   }
   if (input.qualityWarnings > 0) {
     reasons.push("Resolve the quality checks marked for review before publishing.");
