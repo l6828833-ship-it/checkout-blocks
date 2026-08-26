@@ -1,5 +1,0 @@
-node_modules/
-.shopify/
-dist/
-.env
-*.log

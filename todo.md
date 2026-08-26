@@ -1,0 +1,22 @@
+# Project TODO
+
+- [ ] Add the official Shopify integration and record the resulting app configuration prerequisites.
+- [ ] Replace the template authentication flow with Shopify embedded OAuth/token-exchange handling and persistent offline shop sessions.
+- [ ] Server-render the real Shopify API key into the embedded app document and reject startup when required Shopify configuration is absent.
+- [ ] Add database tables and migrations for shops, encrypted sessions, campaigns, targeting rules, widget configurations, attribution events, metering, subscriptions, webhook deliveries, and COD outcomes.
+- [ ] Install and use the official current Shopify Polaris React library and App Bridge components for every embedded-admin route.
+- [ ] Build native embedded navigation and an accessible Dashboard with Shopify equal-width two-column layout, onboarding states, campaign status, and performance metrics.
+- [ ] Build a native Campaign Builder with Shopify primary/secondary two-column layout, content, targeting, scheduling, activation controls, and live storefront preview.
+- [ ] Build Campaigns, COD Forms, Discounts, Analytics, and Settings admin routes with real persisted data and loading/error/empty states.
+- [ ] Create a Shopify Theme App Extension and app embed block with no manual theme-code installation requirement.
+- [ ] Implement a lightweight storefront runtime that retrieves active campaign configuration, evaluates targeting, renders widgets, supports cart-aware free-shipping progress, and fails closed when unavailable.
+- [ ] Implement server-side impression attribution and billing-period usage metering with campaign and shop attribution.
+- [ ] Implement Shopify subscription billing, plan enforcement, trial handling, subscription lifecycle synchronization, and impression-cap graceful degradation.
+- [ ] Implement signed Shopify lifecycle, privacy, and billing webhooks with idempotency, data export/redaction, uninstall cleanup, and invalid-signature rejection.
+- [ ] Implement supported COD confirmation workflow with protected merchant configuration and real Shopify draft-order/order integration boundaries.
+- [ ] Add encryption boundaries and redacted logging for PII and merchant-provided messaging credentials.
+- [ ] Add automated tests for OAuth error handling, session persistence, signed webhooks, billing gates, targeting, metering, and storefront fail-closed behavior.
+- [ ] Optimize embedded admin loading and storefront asset size, then document measured bundle and route-performance results.
+- [ ] Prepare App Store listing copy, data-access disclosures, privacy policy content, support contact placeholders, and live-launch validation protocol.
+- [ ] Validate real installation, subscription, webhooks, app embed behavior, storefront rendering, cart progress, metering, and COD flow against a connected Shopify development store.
+- [ ] Archive the prior selected repository state locally, replace its tracked contents with the completed ConvertPop project, and push the migration as a documented commit.
