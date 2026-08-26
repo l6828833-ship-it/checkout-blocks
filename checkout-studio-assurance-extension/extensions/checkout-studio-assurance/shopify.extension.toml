@@ -1,0 +1,60 @@
+api_version = "2026-07"
+
+[[extensions]]
+type = "ui_extension"
+name = "Checkout Studio Assurance"
+handle = "checkout-studio-assurance"
+
+[[extensions.targeting]]
+target = "purchase.checkout.block.render"
+module = "./src/Checkout.tsx"
+
+[[extensions.targeting]]
+target = "purchase.thank-you.block.render"
+module = "./src/ThankYou.tsx"
+
+[extensions.settings]
+[[extensions.settings.fields]]
+key = "section_title"
+type = "single_line_text_field"
+name = "Section title"
+description = "The title shown above the Checkout Studio message."
+[[extensions.settings.fields.validations]]
+name = "max"
+value = "40"
+
+[[extensions.settings.fields]]
+key = "banner_heading"
+type = "single_line_text_field"
+name = "Message heading"
+description = "The primary reassurance message shown to customers."
+[[extensions.settings.fields.validations]]
+name = "max"
+value = "80"
+
+[[extensions.settings.fields]]
+key = "banner_body"
+type = "multi_line_text_field"
+name = "Message body"
+description = "Short approved customer-facing support or reassurance text."
+[[extensions.settings.fields.validations]]
+name = "max"
+value = "240"
+
+[[extensions.settings.fields]]
+key = "support_note"
+type = "single_line_text_field"
+name = "Support note"
+description = "Optional short support guidance shown below the message."
+[[extensions.settings.fields.validations]]
+name = "max"
+value = "160"
+
+[[extensions.settings.fields]]
+key = "tone"
+type = "single_line_text_field"
+name = "Message style"
+description = "Choose Shopify’s approved status style for the message."
+[[extensions.settings.fields.validations]]
+name = "choices"
+value = "[\"info\", \"success\", \"warning\", \"critical\"]"

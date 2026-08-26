@@ -1,0 +1,91 @@
+# Project TODO
+
+- [x] Add secure Shopify storefront integration and document its safe checkout-customization boundary.
+- [x] Diagnose the Shopify OAuth authorization rejection and document the merchant-owned installation path required before live actions can be enabled.
+- [x] Limit live Shopify publishing controls to verified permissions and API surfaces; retain simulated, non-publishable capability states until authorized.
+- [x] Build the complete standalone workspace first, then provide merchant-owned Shopify installation and authorization steps at delivery.
+- [x] Model merchant-scoped stores, brand kits, presets, styles, versions, modules, schedules, capabilities, and audit events.
+- [x] Seed the 14 original, editable checkout style presets as validated design tokens.
+- [x] Build the elegant embedded application shell, responsive navigation, onboarding, and capability status messaging.
+- [x] Create the capability-aware overview dashboard with active style, guidance, schedules, version activity, and simulated checkout comparison.
+- [x] Build the searchable style library with categories, favorites, compatibility badges, and preview controls.
+- [x] Build the visual style editor with semantic tokens, contextual component controls, and an explicitly simulated checkout preview.
+- [x] Implement accessible checkout preview states across desktop, mobile, shipping, payment, discount, validation, unavailable-shipping, and long-cart scenarios.
+- [x] Provide checkout content block configuration with placement guidance, helper text, and no fabricated social proof or customer claims.
+- [x] Add WCAG-oriented contrast and usability checks with plain-language remediation guidance.
+- [x] Implement drafts, version history, stable rollback confirmation, and a validation-first review-and-apply flow.
+- [x] Implement timezone-aware campaign schedules, automatic restoration safeguards, and failure diagnostics.
+- [x] Add Shopify Admin and checkout customization API connection interfaces, secure session-ready boundaries, and capability-aware publish validation that blocks all unverified live actions.
+- [x] Write and run Vitest coverage for critical validation, capability, persistence, and scheduling behavior.
+- [x] Verify desktop and mobile visual quality, loading, error, empty, and permission-denied states.
+- [x] Document the merchant-owned Shopify installation, authorization, and supported-feature verification path.
+- [x] Implement a guided onboarding flow with capability check, brand setup, recommended presets, and preview/apply steps.
+- [x] Add a review-and-apply workflow with validation summary, confirmation, rollback confirmation, and database-backed version history.
+- [x] Implement the deployed campaign callback boundary with authenticated task-ID lookup and safe blocked diagnostics until Shopify authorization is available.
+- [x] Add Vitest coverage for studio workspace/capability procedures and merchant-style/campaign persistence helpers.
+- [x] Add and verify explicit loading, error, empty, and permission-denied states for studio queries and mutations.
+- [x] Create final checkpoint and deliver project plus Shopify connection setup notes.
+- [x] Define premium checkout funnel theme families, brand/logo treatments, and Shopify-compliant configurable placement modes.
+- [x] Prepare a production-ready implementation prompt for the expanded Checkout Studio concept.
+- [x] Expand reusable theme data with the twelve premium funnel theme families and complete token systems.
+- [x] Add Theme Atelier, Brand Signature, Funnel Composer, Placement Map, and Capability Center workspace areas.
+- [x] Add branded logo treatments, theme-specific checkout simulations, and accessible preview controls.
+- [x] Add approved placement states and four-state control legend for brand, merchant, extension, and Shopify-owned elements.
+- [x] Extend review and release guidance with funnel-stage change summaries and safe alternatives for unavailable options.
+- [x] Add tests and responsive verification for the expanded checkout-branding workspace.
+- [x] Extend Theme Atelier tokens with secondary actions, border treatment, logo mode, and supported surface treatment.
+- [x] Wire Brand Signature and theme treatment choices into the checkout simulation and Theme Atelier previews.
+- [x] Make review guidance dynamic from the active theme, funnel direction, and safe alternatives.
+- [x] Add automated coverage for Theme Atelier data and verify the remaining expanded mobile workspace areas.
+- [x] Add logo treatment to the reusable Theme Atelier token model and schema validation.
+- [x] Apply each selected Theme Atelier logo treatment to the active Brand Signature and checkout simulation.
+- [x] Reuse a strict shared style-token schema for draft persistence, including logo treatment validation.
+- [x] Add test coverage for valid and invalid logo-treatment draft-save payloads.
+- [x] Save a final checkpoint and deliver the expanded Checkout Studio experience.
+- [x] Add a unified responsive preview selector for mobile, tablet, and desktop funnel-theme simulations.
+- [x] Add tablet-specific checkout simulation behavior and device dimensions alongside the existing mobile and desktop states.
+- [x] Validate responsive preview controls and device layouts, then save and deliver the enhancement.
+- [x] Save a checkpoint containing the responsive device-preview enhancement and deliver it.
+- [ ] Replace the placeholder Connect Shopify action with a real embedded-app initialization and clear configuration-aware connection state.
+- [ ] Add Shopify App Bridge token exchange, verified merchant-session storage, and protected Admin API capability calls.
+- [ ] Query current store configuration and checkout eligibility only after a verified Shopify session is established.
+- [ ] Test the embedded connection flow, error states, and capability gates; save and deliver the updated checkpoint.
+- [x] Register and document the dedicated callback URL for the configured Shopify App URL: `/api/shopify/auth/callback`.
+- [ ] Warn that the current sandbox preview domain is suitable for testing only and must be replaced by the published production domain before a durable release.
+- [ ] Publish Checkout Studio from the Manus project UI and replace the Shopify Dev Dashboard preview URL with its permanent published URL before live embedded-app testing.
+- [ ] Update Shopify Dev Dashboard to use the published Checkout Studio domain and its dedicated callback URL before embedded connection testing.
+- [x] Add Shopify App Bridge embedded-session initialization and native Admin title/navigation behavior.
+- [x] Obtain Shopify App Bridge ID tokens in the embedded client and attach them to backend requests.
+- [x] Add server-side Shopify ID-token verification and token exchange with verified merchant-session persistence.
+- [ ] Add native Shopify Admin navigation and title actions that follow the active Checkout Studio workspace area.
+- [ ] Replace widget-like connection affordances with a Shopify-native embedded connection state and installation flow.
+- [ ] Validate native embedded behavior inside Shopify Admin and document the required published-app configuration.
+- [ ] Map Checkout Studio features to Shopify-supported live effects: checkout configuration, checkout UI extensions, and theme app embeds.
+- [ ] Implement a verified, capability-gated Apply flow that creates real checkout configuration changes only after merchant authorization.
+- [ ] Provide real app-embed and extension activation guidance where Shopify requires merchant action in the Theme or Checkout editor.
+- [ ] Implement the real Checkout and Accounts Configuration API apply pipeline behind verified Shopify merchant sessions.
+- [x] Create a Shopify CLI checkout UI extension artifact named Checkout Studio Assurance with a safe checkout block target.
+- [x] Add merchant-facing installation, deployment, checkout-editor activation, and verification guidance for the Assurance extension.
+- [ ] Replace deprecated checkout-branding scopes with `read_checkout_and_accounts_configurations,write_checkout_and_accounts_configurations` in the Shopify Dev Dashboard before testing live apply.
+- [ ] Deliver Checkout Studio Assurance as a Checkout UI extension that renders in Shopify checkout without a storefront app embed.
+- [ ] Clearly distinguish checkout customization from a Shopify Payments/payment-gateway integration and retain only approved checkout capabilities.
+- [x] Create a Visual Studio Code-ready Shopify CLI extension starter project for Checkout Studio.
+- [x] Provide the local CLI commands to link, develop, deploy, and activate Checkout Studio Assurance in the Checkout and Accounts editor.
+- [x] Package a downloadable, Visual Studio Code-ready Checkout Studio Assurance Checkout UI extension starter project.
+- [ ] Decide the final Shopify app identity (`checkout styles` versus `checkout-studio-assurance`), relink the extension to the intended app, and persist the resulting app identifiers/configuration.
+- [ ] Document that Shopify CLI has successfully linked and previewed the extension under `checkout-studio-assurance`, and update the install guidance to avoid claiming it is linked to `checkout styles`.
+- [x] Fix the Checkout Studio Assurance extension JSX runtime and package dependencies so Shopify CLI can bundle the project.
+- [x] Re-run `shopify app dev` locally with the corrected package and confirm the linked extension bundles successfully in Shopify CLI.
+- [x] Confirm that Checkout Studio Assurance appears under Add app block on the Thank you page in the Checkout editor, then complete the non-Plus preview attachment test.
+- [x] Record the verified Thank you page activation and define which settings can be edited in Checkout Studio versus Shopify’s protected checkout editor.
+- [ ] Replace the separate Assurance app’s placeholder `https://example.com` App URL with the published Checkout Studio URL and configure a matching callback before release.
+- [ ] Add a safe merchant-controlled configuration path for the native Assurance extension, without exposing unsupported payment-stage checkout styling.
+- [ ] Unify the Checkout Studio dashboard and Checkout Studio Assurance extension under one Shopify app identity so Manage app opens the real embedded merchant workspace.
+- [ ] Make Checkout Studio open from Shopify Admin with a native-feeling app shell and sub-navigation comparable to Shopify Admin apps, while retaining Shopify-supported checkout boundaries.
+- [x] Confirm `checkout styles` as the single final Shopify app identity for the dashboard and Assurance extension.
+- [ ] Keep `checkout-studio-assurance` unchanged as the development-test app while configuring and relinking the final `checkout styles` app.
+- [ ] Defer any self-hosting migration until the merchant explicitly selects it; complete the native Shopify Admin embedded-app path first.
+- [ ] Prepare Fly.io deployment artifacts, production environment guidance, and Shopify URL-switch instructions for the complete Checkout Studio project.
+- [ ] Prepare a self-hosting deployment package and migration checklist for the unified Checkout Studio Shopify app.
+- [x] Add a Thank you page block target for non-Plus development-store testing while retaining the checkout block target for Shopify Plus stores.
+- [x] Deliver the actual downloadable Thank you page extension archive rather than a project-version link.
