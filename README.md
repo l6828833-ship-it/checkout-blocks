@@ -36,7 +36,7 @@ Do not commit any secrets. The deployed service must provide the following envir
 
 First, provision PostgreSQL and apply the reviewed migration with `pnpm prisma migrate deploy`. Configure the app’s actual client ID, permanent URL, redirect URI, app proxy, and approved minimal scopes through Shopify CLI and the Dev Dashboard. Deploy the Theme App Extension with the application. In the merchant’s theme editor, enable the **ConvertPop campaigns** app embed; a direct theme-editor deep link should be provided in the final embedded onboarding experience.
 
-The Shopify configuration retains `REPLACE-WITH-CONVERTPOP-DOMAIN` placeholders deliberately. Replacing them requires the real final public domain; a placeholder must never be used for a real install or App Store submission.
+The Shopify configuration is set to `https://checkout-studio.fly.dev`. Configure this exact URL as the App URL in the Shopify Dev Dashboard, retain `https://checkout-studio.fly.dev/auth/callback` as the allowed OAuth redirect, and confirm the deployed Fly.io service serves the same URL over HTTPS before installation.
 
 ## Development and validation
 

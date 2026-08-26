@@ -30,7 +30,8 @@
 - [x] Implement supported COD confirmation and draft-order workflows using Shopify Admin API data boundaries, protected merchant configuration, and PII-safe logging.
 - [x] Add critical integration, auth, billing, webhook, metering, and storefront fail-closed tests; then measure admin and storefront performance budgets.
 - [x] Write App Store listing, data-use, privacy, support, and real-store acceptance-validation documentation.
-- [ ] Replace the selected GitHub repository foundation with the finished ConvertPop Shopify application and push the documented production migration.
+- [ ] Complete final production readiness: configure the real Shopify app and PostgreSQL deployment, run auth and billing integration tests, capture embedded-admin LCP, and complete live-store acceptance evidence.
+- [x] Push the current ConvertPop source to the selected GitHub repository in commit 1c444f2b6c1d121f55c024f707196e3634b6f0a4.
 - [x] Archive the prior selected repository contents and replace it with the new ConvertPop project foundation in commit 4a34f20389f9e681b6653560fc7ffe0eaf983531.
 - [x] Implement the missing campaign detail route and verify all embedded resource navigation paths resolve correctly.
 - [x] Wire Shopify cart change events into the free-shipping runtime and test live subtotal-message updates.
@@ -40,5 +41,7 @@
 - [x] Simulate a storefront cart mutation and assert free-shipping copy refreshes with the new subtotal.
 - [x] Test actual server-side campaign and COD creation paths to prove lower plan tiers are rejected for restricted features.
 - [x] Test uninstall and subscription-update webhook handlers for invalid signatures and repeated delivery behavior.
-- [ ] Test direct COD initiation is rejected for lower-tier shops and test Max-only scheduling enforcement.
-- [ ] Test the uninstall and subscription-update handlers themselves for invalid authentication and duplicate webhook delivery IDs.
+- [x] Test direct COD initiation is rejected for lower-tier shops and test Max-only scheduling enforcement.
+- [x] Test the uninstall and subscription-update handlers themselves for invalid authentication and duplicate webhook delivery IDs.
+- [ ] Replace all remaining Shopify production URL placeholders with https://checkout-studio.fly.dev and verify the configuration matches the app proxy and redirect URI.
+- [ ] Replace the selected GitHub repository contents with the current ConvertPop source after the production URL update, excluding secrets and local artifacts.

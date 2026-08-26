@@ -1,7 +1,7 @@
 # This file stores configurations for your Shopify app.
 name = "ConvertPop"
 client_id = ""
-application_url = "https://REPLACE-WITH-CONVERTPOP-DOMAIN"
+application_url = "https://checkout-studio.fly.dev"
 embedded = true
 
 [access_scopes]
@@ -31,9 +31,9 @@ api_version = "2026-07"
   compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
 
 [auth]
-redirect_urls = ["https://REPLACE-WITH-CONVERTPOP-DOMAIN/auth/callback"]
+redirect_urls = ["https://checkout-studio.fly.dev/auth/callback"]
 
 [app_proxy]
-url = "https://REPLACE-WITH-CONVERTPOP-DOMAIN/apps/convertpop"
+url = "https://checkout-studio.fly.dev/apps/convertpop"
 subpath = "convertpop"
 prefix = "apps"
