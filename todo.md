@@ -43,5 +43,8 @@
 - [x] Test uninstall and subscription-update webhook handlers for invalid signatures and repeated delivery behavior.
 - [x] Test direct COD initiation is rejected for lower-tier shops and test Max-only scheduling enforcement.
 - [x] Test the uninstall and subscription-update handlers themselves for invalid authentication and duplicate webhook delivery IDs.
-- [ ] Replace all remaining Shopify production URL placeholders with https://checkout-studio.fly.dev and verify the configuration matches the app proxy and redirect URI.
-- [ ] Replace the selected GitHub repository contents with the current ConvertPop source after the production URL update, excluding secrets and local artifacts.
+- [x] Replace all remaining Shopify production URL placeholders with https://checkout-studio.fly.dev and verify the configuration matches the app proxy and redirect URI.
+- [x] Replace the selected GitHub repository contents with the current ConvertPop source after the production URL update, excluding secrets and local artifacts in commit 3cc6cf28bd9c8de457f2e053b8b53467948f821e.
+- [ ] Reconcile the active Dev Dashboard callback URL `/api/shopify/auth/callback` and checkout-only scopes with the ConvertPop Shopify app configuration and required minimal access.
+- [ ] Verify Supabase PostgreSQL compatibility, configure all required Fly.io ConvertPop secrets, deploy staged secrets, and execute the Fly.io release sequence.
+- [x] Add and validate a Fly.io `fly.toml` and production Node container build configuration for the ConvertPop React Router service.
