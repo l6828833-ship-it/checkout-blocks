@@ -1,0 +1,39 @@
+# This file stores configurations for your Shopify app.
+name = "ConvertPop"
+client_id = ""
+application_url = "https://REPLACE-WITH-CONVERTPOP-DOMAIN"
+embedded = true
+
+[access_scopes]
+# Learn more at https://shopify.dev/docs/apps/tools/cli/configuration#access_scopes
+scopes = "read_customers,read_discounts,read_orders,read_products,unauthenticated_read_product_listings,write_discounts,write_draft_orders"
+
+[webhooks]
+api_version = "2026-07"
+
+  # Handled by: /app/routes/webhooks.app.uninstalled.tsx
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/uninstalled"
+  topics = ["app/uninstalled"]
+
+  # Required to make approved scope changes visible to merchants.
+  [[webhooks.subscriptions]]
+  topics = [ "app/scopes_update" ]
+  uri = "/webhooks/app/scopes_update"
+
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/app/subscriptions-update"
+  topics = ["app_subscriptions/update"]
+
+  # Mandatory compliance topics for a public Shopify app.
+  [[webhooks.subscriptions]]
+  uri = "/webhooks/compliance"
+  compliance_topics = ["customers/data_request", "customers/redact", "shop/redact"]
+
+[auth]
+redirect_urls = ["https://REPLACE-WITH-CONVERTPOP-DOMAIN/auth/callback"]
+
+[app_proxy]
+url = "https://REPLACE-WITH-CONVERTPOP-DOMAIN/apps/convertpop"
+subpath = "convertpop"
+prefix = "apps"

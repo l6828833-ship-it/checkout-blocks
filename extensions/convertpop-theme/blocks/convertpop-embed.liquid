@@ -1,0 +1,20 @@
+{% liquid
+  assign convertpop_config_url = routes.root_url | append: 'apps/convertpop/config'
+  assign convertpop_event_url = routes.root_url | append: 'apps/convertpop/events'
+%}
+
+<script>
+  window.ConvertPop = window.ConvertPop || {};
+  window.ConvertPop.configUrl = {{ convertpop_config_url | json }};
+  window.ConvertPop.eventUrl = {{ convertpop_event_url | json }};
+  window.ConvertPop.currency = {{ cart.currency.iso_code | default: shop.currency | json }};
+</script>
+{{ 'convertpop-runtime.js' | asset_url | script_tag }}
+
+{% schema %}
+{
+  "name": "ConvertPop campaigns",
+  "target": "body",
+  "settings": []
+}
+{% endschema %}

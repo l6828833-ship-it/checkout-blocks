@@ -1,0 +1,164 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Session {
+  id                  String    @id
+  shop                String
+  state               String
+  isOnline            Boolean   @default(false)
+  scope               String?
+  expires             DateTime?
+  accessToken         String
+  userId              BigInt?
+  firstName           String?
+  lastName            String?
+  email               String?
+  accountOwner        Boolean   @default(false)
+  locale              String?
+  collaborator        Boolean?  @default(false)
+  emailVerified       Boolean?  @default(false)
+  refreshToken        String?
+  refreshTokenExpires DateTime?
+
+  @@index([shop])
+}
+
+enum CampaignKind {
+  ANNOUNCEMENT_BAR
+  POPUP
+  BANNER
+  COD_FORM
+}
+
+enum CampaignStatus {
+  DRAFT
+  LIVE
+  PAUSED
+  SCHEDULED
+}
+
+enum PlanCode {
+  FREE
+  PLUS
+  PRO
+  MAX
+}
+
+enum AttributionEventType {
+  IMPRESSION
+  DISMISSAL
+  CLICK
+  SUBMISSION
+  CONVERSION
+}
+
+model Shop {
+  id                String   @id @default(cuid())
+  domain            String   @unique
+  planCode          PlanCode @default(FREE)
+  usageImpressions  Int      @default(0)
+  usagePeriodStart  DateTime?
+  usagePeriodEnd    DateTime?
+  uninstalledAt     DateTime?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+  campaigns         Campaign[]
+  events            EventAttribution[]
+  subscriptions     Subscription[]
+  webhookDeliveries WebhookDelivery[]
+  codSubmissions    CodSubmission[]
+  smsProvider       SmsProviderConfig?
+}
+
+model Campaign {
+  id        String         @id @default(cuid())
+  shopId    String
+  shop      Shop           @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  name      String
+  kind      CampaignKind
+  status    CampaignStatus @default(DRAFT)
+  content   Json
+  targeting Json
+  schedule  Json
+  startsAt  DateTime?
+  endsAt    DateTime?
+  createdAt DateTime       @default(now())
+  updatedAt DateTime       @updatedAt
+  events    EventAttribution[]
+
+  @@index([shopId, status])
+}
+
+model EventAttribution {
+  id          String               @id @default(cuid())
+  shopId      String
+  shop        Shop                 @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  campaignId  String?
+  campaign    Campaign?            @relation(fields: [campaignId], references: [id], onDelete: SetNull)
+  eventType   AttributionEventType
+  visitorHash String
+  metadata    Json?
+  createdAt   DateTime             @default(now())
+
+  @@index([shopId, eventType, createdAt])
+  @@index([campaignId, createdAt])
+}
+
+model Subscription {
+  id                    String   @id @default(cuid())
+  shopId                String
+  shop                  Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  shopifySubscriptionId String?  @unique
+  planCode              PlanCode
+  status                String
+  currentPeriodEndsAt   DateTime?
+  createdAt             DateTime @default(now())
+  updatedAt             DateTime @updatedAt
+}
+
+model WebhookDelivery {
+  id          String   @id @default(cuid())
+  shopId      String
+  shop        Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  topic       String
+  webhookId   String   @unique
+  processedAt DateTime @default(now())
+}
+
+model CodSubmission {
+  id            String   @id @default(cuid())
+  shopId        String
+  shop          Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  campaignId    String?
+  status        String
+  customerHash  String?
+  phoneCipher   String
+  payloadCipher String
+  otpHash       String?
+  otpExpiresAt  DateTime?
+  verifiedAt    DateTime?
+  draftOrderId  String?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([shopId, status])
+  @@index([shopId, customerHash])
+}
+
+model SmsProviderConfig {
+  id                   String   @id @default(cuid())
+  shopId               String   @unique
+  shop                 Shop     @relation(fields: [shopId], references: [id], onDelete: Cascade)
+  provider             String
+  encryptedCredentials String
+  senderIdentity       String
+  recoveryEnabled      Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+}

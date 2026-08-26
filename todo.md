@@ -1,22 +1,44 @@
-# Project TODO
+# Checkout Studio React Router Rebuild
 
-- [ ] Add the official Shopify integration and record the resulting app configuration prerequisites.
-- [ ] Replace the template authentication flow with Shopify embedded OAuth/token-exchange handling and persistent offline shop sessions.
-- [ ] Server-render the real Shopify API key into the embedded app document and reject startup when required Shopify configuration is absent.
-- [ ] Add database tables and migrations for shops, encrypted sessions, campaigns, targeting rules, widget configurations, attribution events, metering, subscriptions, webhook deliveries, and COD outcomes.
-- [ ] Install and use the official current Shopify Polaris React library and App Bridge components for every embedded-admin route.
-- [ ] Build native embedded navigation and an accessible Dashboard with Shopify equal-width two-column layout, onboarding states, campaign status, and performance metrics.
-- [ ] Build a native Campaign Builder with Shopify primary/secondary two-column layout, content, targeting, scheduling, activation controls, and live storefront preview.
-- [ ] Build Campaigns, COD Forms, Discounts, Analytics, and Settings admin routes with real persisted data and loading/error/empty states.
-- [ ] Create a Shopify Theme App Extension and app embed block with no manual theme-code installation requirement.
-- [ ] Implement a lightweight storefront runtime that retrieves active campaign configuration, evaluates targeting, renders widgets, supports cart-aware free-shipping progress, and fails closed when unavailable.
-- [ ] Implement server-side impression attribution and billing-period usage metering with campaign and shop attribution.
-- [ ] Implement Shopify subscription billing, plan enforcement, trial handling, subscription lifecycle synchronization, and impression-cap graceful degradation.
-- [ ] Implement signed Shopify lifecycle, privacy, and billing webhooks with idempotency, data export/redaction, uninstall cleanup, and invalid-signature rejection.
-- [ ] Implement supported COD confirmation workflow with protected merchant configuration and real Shopify draft-order/order integration boundaries.
-- [ ] Add encryption boundaries and redacted logging for PII and merchant-provided messaging credentials.
-- [ ] Add automated tests for OAuth error handling, session persistence, signed webhooks, billing gates, targeting, metering, and storefront fail-closed behavior.
-- [ ] Optimize embedded admin loading and storefront asset size, then document measured bundle and route-performance results.
-- [ ] Prepare App Store listing copy, data-access disclosures, privacy policy content, support contact placeholders, and live-launch validation protocol.
-- [ ] Validate real installation, subscription, webhooks, app embed behavior, storefront rendering, cart progress, metering, and COD flow against a connected Shopify development store.
-- [ ] Archive the prior selected repository state locally, replace its tracked contents with the completed ConvertPop project, and push the migration as a documented commit.
+- [x] Clone Shopify’s official React Router embedded-app template into an isolated rebuild workspace.
+- [x] Configure checkout styles identity, checkout configuration scopes, Fly.io URLs, PostgreSQL session storage, APP_UNINSTALLED, scope-update, and mandatory GDPR webhook declarations.
+- [x] Replace the sample product mutation with a read-only, server-authenticated Checkout Studio capability overview.
+- [x] Implement data-minimization responses for customer privacy requests and delete the shop’s session data on shop-redaction webhooks.
+- [x] Install dependencies and generate the PostgreSQL Prisma client.
+- [x] Add a Prisma migration for the Shopify session database in Supabase without applying it automatically.
+- [ ] Apply the reviewed Prisma session migration to the configured Supabase database only after finalizing the rebuild deployment transition.
+- [ ] Configure the final checkout styles client ID through Shopify CLI without committing secrets.
+- [x] Correct the official template Docker build so React Router build dependencies remain available before the production runtime starts.
+- [x] Implement initial merchant-scoped visual draft persistence in the official scaffold without any live checkout mutation.
+- [x] Preserve the fourteen original Checkout Studio visual presets and their safe design-token metadata in the React Router rebuild.
+- [x] Port the full safe preset token model for all fourteen Checkout Studio presets, including semantic colors, border treatment, density, surface treatment, logo treatment, and category metadata.
+- [x] Persist and display the full migrated preset metadata in the rebuilt Style Studio preview rather than only a reduced color subset.
+- [x] Render the remaining preserved semantic token fields and radius in a concise Style Studio token summary.
+- [ ] Extend draft persistence with reviewed style versions, audit records, campaign schedules, and Assurance extension state.
+- [ ] Add a separately reviewed Checkout and Accounts Configuration update and rollback pipeline.
+- [ ] Validate embedded OAuth, GraphQL capability reads, GDPR webhooks, APP_UNINSTALLED cleanup, and Fly.io deployment.
+- [x] Replace legacy Checkout Studio names, routes, copy, and visual presets with the ConvertPop merchant-conversion product model.
+- [ ] Configure the final public Shopify app through Shopify CLI with actual application credentials and a permanent HTTPS domain, without committing secrets.
+- [x] Add startup configuration validation and a server-rendered Shopify API key meta tag for embedded token exchange.
+- [x] Add durable Postgres models and migrations for shops, offline sessions, campaigns, targeting, widgets, event attribution, metering, subscriptions, webhook deliveries, and privacy operations.
+- [x] Build a native App Bridge and current Polaris embedded shell with no custom Shopify Admin chrome.
+- [x] Build Dashboard, Campaigns, Campaign Builder, COD Forms, Discounts, Analytics, and Settings routes using the required Shopify layouts and accessible resource patterns.
+- [x] Create a Theme App Extension app embed with an independently tested, dependency-light storefront runtime and no manual theme code installation.
+- [x] Implement server-verified impression metering, storefront targeting, cart-aware free-shipping progress, and graceful plan-cap behavior.
+- [x] Implement Shopify subscription billing, server-side entitlement enforcement, plan-change synchronization, and cancellation handling.
+- [x] Register and test signed uninstall, GDPR, subscription, and appropriate lifecycle webhooks with idempotent cleanup and data-handling controls.
+- [x] Implement supported COD confirmation and draft-order workflows using Shopify Admin API data boundaries, protected merchant configuration, and PII-safe logging.
+- [x] Add critical integration, auth, billing, webhook, metering, and storefront fail-closed tests; then measure admin and storefront performance budgets.
+- [x] Write App Store listing, data-use, privacy, support, and real-store acceptance-validation documentation.
+- [ ] Replace the selected GitHub repository foundation with the finished ConvertPop Shopify application and push the documented production migration.
+- [x] Archive the prior selected repository contents and replace it with the new ConvertPop project foundation in commit 4a34f20389f9e681b6653560fc7ffe0eaf983531.
+- [x] Implement the missing campaign detail route and verify all embedded resource navigation paths resolve correctly.
+- [x] Wire Shopify cart change events into the free-shipping runtime and test live subtotal-message updates.
+- [x] Enforce plan entitlements server-side for advanced targeting and COD workflows, with automated coverage.
+- [x] Add webhook integration tests for signed delivery acceptance, invalid-signature rejection, idempotency, and privacy cleanup.
+- [ ] Add auth and billing integration tests and capture production embedded-admin LCP after final Shopify deployment.
+- [x] Simulate a storefront cart mutation and assert free-shipping copy refreshes with the new subtotal.
+- [x] Test actual server-side campaign and COD creation paths to prove lower plan tiers are rejected for restricted features.
+- [x] Test uninstall and subscription-update webhook handlers for invalid signatures and repeated delivery behavior.
+- [ ] Test direct COD initiation is rejected for lower-tier shops and test Max-only scheduling enforcement.
+- [ ] Test the uninstall and subscription-update handlers themselves for invalid authentication and duplicate webhook delivery IDs.
