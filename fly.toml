@@ -2,7 +2,7 @@ app = "checkout-studio"
 primary_region = "arn"
 
 [build]
-  builder = "paketobuildpacks/builder-jammy-base"
+  dockerfile = "Dockerfile"
 
 [env]
   NODE_ENV = "production"

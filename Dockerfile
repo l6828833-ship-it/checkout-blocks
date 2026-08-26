@@ -1,17 +1,23 @@
-FROM node:22-alpine
+FROM node:22-bookworm-slim AS build
 
-RUN apk add --no-cache openssl
-
-EXPOSE 3000
 WORKDIR /app
 
-# Install every dependency before the React Router build. Prisma remains
-# available at runtime because docker-start applies the reviewed migration.
-COPY package.json package-lock.json .
-RUN npm ci && npm cache clean --force
+COPY package.json package-lock.json ./
+RUN npm ci
 
 COPY . .
-RUN npm run build
+RUN npx prisma generate && npm run build && npm prune --omit=dev
 
+FROM node:22-bookworm-slim AS runtime
+
+WORKDIR /app
 ENV NODE_ENV=production
-CMD ["npm", "run", "docker-start"]
+ENV PORT=8080
+
+COPY --from=build /app/package.json ./
+COPY --from=build /app/node_modules ./node_modules
+COPY --from=build /app/build ./build
+COPY --from=build /app/prisma ./prisma
+
+EXPOSE 8080
+CMD ["npm", "run", "start"]

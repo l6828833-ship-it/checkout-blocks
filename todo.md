@@ -48,3 +48,5 @@
 - [ ] Reconcile the active Dev Dashboard callback URL `/api/shopify/auth/callback` and checkout-only scopes with the ConvertPop Shopify app configuration and required minimal access.
 - [ ] Verify Supabase PostgreSQL compatibility, configure all required Fly.io ConvertPop secrets, deploy staged secrets, and execute the Fly.io release sequence.
 - [x] Add and validate a Fly.io `fly.toml` and production Node container build configuration for the ConvertPop React Router service.
+- [ ] Replace the legacy Checkout Studio Fly.io image with the current ConvertPop release and verify the embedded Shopify admin shows the new ConvertPop routes.
+- [ ] Replace the failing Fly.io buildpack configuration with a Dockerfile-based Node build and redeploy the ConvertPop release.
